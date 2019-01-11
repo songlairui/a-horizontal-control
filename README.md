@@ -1,4 +1,7 @@
-# vue-canvas-lr
+# vue-canvas-with-left-right-control
+
+Vue + Canvas 实现场景左右移动
+添加 vue-rx, 以备不时之需
 
 ## Project setup
 ```
