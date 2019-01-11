@@ -2,14 +2,16 @@
   <canvas ref="canvas" class="full"></canvas>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+
+@Component
 export default class LayerCanvas extends Vue {
   @Prop(String)
   img!: string;
   @Prop(Number)
-  width: number = 320;
+  width!: number;
   @Prop(Number)
-  height: number = 480;
+  height!: number;
 
   $refs!: {
     canvas: HTMLCanvasElement;
@@ -17,6 +19,8 @@ export default class LayerCanvas extends Vue {
   mounted() {
     this.init();
   }
+  @Watch('width')
+  @Watch('height')
   init() {
     const { canvas } = this.$refs;
     canvas.width = this.width;
