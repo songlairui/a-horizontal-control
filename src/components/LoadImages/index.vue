@@ -1,14 +1,17 @@
 <template>
   <div class="load-wrapper">
     <div class="block" v-if="!completed">
-      <load-image
-        v-for="(task,idx) in scheduing"
-        :key="idx"
-        :src="task.src"
-        @skip="skip(idx,$event)"
-        @loaded="loaded(idx, $event)"
-        @fail="loadFail(idx,$event)"
-      ></load-image>
+      <template v-for="(task,idx) in scheduing">
+        <template v-if="!task"></template>
+        <load-image
+          v-else
+          :key="idx"
+          :src="task.src"
+          @skip="skip(idx,$event)"
+          @loaded="loaded(idx, $event)"
+          @fail="loadFail(idx,$event)"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -33,6 +36,7 @@ export default class LoadImages extends Vue {
 
   tasks: Task[] = this.srcs.map((src, i) => ({ src, i }));
   scheduing: Task[] = [];
+  activeThreads: number = this.threads;
   succeedTask: Task[] = [];
   failedTask: Task[] = [];
 
@@ -41,7 +45,7 @@ export default class LoadImages extends Vue {
   completed: boolean = false;
 
   mounted() {
-    this.scheduing.push(...this.tasks.splice(-this.threads));
+    this.scheduing.push(...this.tasks.splice(0, this.threads));
   }
 
   @Emit('progress')
@@ -53,6 +57,16 @@ export default class LoadImages extends Vue {
       completed: this.completedCount,
       total: this.taskLength,
     };
+  }
+
+  stopThreads(i: number) {
+    // 清除自己
+    delete this.scheduing[i];
+    this.activeThreads--;
+    if (this.activeThreads < 1) {
+      this.$emit('finish');
+      this.completed = true;
+    }
   }
 
   skip(i: number, bool: boolean) {
@@ -73,11 +87,10 @@ export default class LoadImages extends Vue {
       if (this.scheduing[i].src === nextTask.src) {
         this.loadNext(i);
       } else {
-        this.scheduing[i] = nextTask;
+        this.scheduing.splice(i, 1, nextTask);
       }
     } else {
-      this.$emit('finish');
-      this.completed = true;
+      this.stopThreads(i);
     }
   }
 }
