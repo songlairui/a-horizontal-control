@@ -1,13 +1,13 @@
 <template>
   <div id="app" ref="app">
+    <load-images :srcs="imgs" @progress="onProgress" @finish="finish"/>
+    <layer-canvas v-bind="canvasOpt"/>
+    <control :debugging="true" :touching.sync="touching" :direction.sync="direction">
+      <pre class="info">{{ info }} {{'\n'}}{{ progress }} {{'\n'}} {{ img }}</pre>
+    </control>
     <transition name="component-fade" mode="out-in">
       <div v-if="!assetsReady" class="loading">{{percentDisplay}}</div>
-      <control v-else :debugging="true" :touching.sync="touching" :direction.sync="direction">
-        <pre class="info">{{ info }} {{'\n'}}{{ progress }} {{'\n'}} {{ img }}</pre>
-      </control>
     </transition>
-    <load-images :srcs="imgs" @progress="onProgress" @finish="finish"/>
-    <layer-canvas v-bind="canvasOpt"></layer-canvas>
   </div>
 </template>
 
