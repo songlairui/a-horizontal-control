@@ -1,18 +1,30 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <control :debugging="true" :touching.sync="touching" :direction.sync="direction">
+      <pre>{{ info }}</pre>
+    </control>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
 
 export default Vue.extend({
   name: 'app',
-  components: {
-    HelloWorld,
+  data() {
+    return {
+      direction: 1,
+      touching: false,
+    };
+  },
+  computed: {
+    info(): string {
+      const touching = this.touching ? 'touching' : '--------';
+      return (this.direction === -1
+        ? ['←', touching, '  ']
+        : ['  ', touching, '→']
+      ).join(' ');
+    },
   },
 });
 </script>

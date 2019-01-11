@@ -8,14 +8,16 @@
     @mousedown="start"
     @touchend="stop"
     @mouseup="stop"
-  ></div>
+  >
+    <slot></slot>
+  </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator';
 import { Boundary, EventPosi } from './all.interface';
 
 @Component
-export default class ControlDecorator extends Vue {
+export default class Control extends Vue {
   @Prop({ type: Boolean, default: true })
   debugging!: string;
 
@@ -65,8 +67,8 @@ export default class ControlDecorator extends Vue {
       return;
     }
     this.touching = true;
-    const { width } = this.boundary;
-    this.direction = x < width / 2 ? -1 : 1;
+    const { width, left = 0 } = this.boundary;
+    this.direction = x - left < width / 2 ? -1 : 1;
   }
   moving(e: any) {
     const { clientX: x, clientY: y } = e.touches ? e.touches[0] : e;
@@ -79,8 +81,7 @@ export default class ControlDecorator extends Vue {
     if (outside) {
       return;
     }
-    const direction = x < width / 2 ? -1 : 1;
-    this.direction = direction;
+    this.direction = x - left < width / 2 ? -1 : 1;
   }
   stop() {
     this.touching = false;
@@ -90,6 +91,7 @@ export default class ControlDecorator extends Vue {
 <style scoped>
 .ctrl-block {
   position: fixed;
+  user-select: none;
 }
 .ctrl-block.debugging {
   top: 41%;
