@@ -1,13 +1,18 @@
 <template>
   <div id="app" ref="app">
-    <load-images :srcs="imgs" @progress="onProgress" @finish="finish"/>
-    <layer-canvas v-if="assetsReady" v-bind="canvasOpt"/>
+    <load-images v-if="!assetsReady" :srcs="imgs" @progress="onProgress" @finish="finish"/>
+    <layer-canvas v-else v-bind="canvasOpt"/>
+    <control
+      v-if="assetsReady"
+      :debugging="true"
+      :touching.sync="touching"
+      :direction.sync="direction"
+    >
+      <pre class="info">{{ info }} {{'\n'}}{{ progress }} {{'\n'}} {{ img }}</pre>
+    </control>
     <transition name="component-fade" mode="in-out">
       <div v-if="!assetsReady" class="loading">{{percentDisplay}}</div>
     </transition>
-    <control :debugging="true" :touching.sync="touching" :direction.sync="direction">
-      <pre class="info">{{ info }} {{'\n'}}{{ progress }} {{'\n'}} {{ img }}</pre>
-    </control>
   </div>
 </template>
 
@@ -56,7 +61,9 @@ export default class App extends Vue {
     return {
       width: this.width,
       height: this.height,
-      img: this.img,
+      img: logo,
+      touching: this.touching,
+      direction: this.direction,
     };
   }
   initBoundary() {
