@@ -3,7 +3,11 @@ import App from './App.vue';
 import Components from './components';
 
 Object.values(Components).forEach((component: VueConstructor, idx) => {
-  Vue.component(component.name || `G${idx}`, component);
+  let name = component.name;
+  if (!name || name === 'VueComponent') {
+    name = `G${idx}`;
+  }
+  Vue.component(name, component);
 });
 
 Vue.config.productionTip = false;
