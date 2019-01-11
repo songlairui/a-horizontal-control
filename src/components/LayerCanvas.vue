@@ -19,8 +19,6 @@ export default class LayerCanvas extends Vue {
   mounted() {
     this.init();
   }
-  @Watch('width')
-  @Watch('height')
   init() {
     const { canvas } = this.$refs;
     canvas.width = this.width;
