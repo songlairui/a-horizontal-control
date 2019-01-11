@@ -1,7 +1,7 @@
 <template>
   <div id="app" ref="app">
     <transition name="component-fade" mode="out-in">
-      <div v-if="!assetsReady" class="loading">{{percent}}</div>
+      <div v-if="!assetsReady" class="loading">{{percentDisplay}}</div>
       <control v-else :debugging="true" :touching.sync="touching" :direction.sync="direction">
         <pre class="info">{{ info }} {{'\n'}}{{ progress }} {{'\n'}} {{ img }}</pre>
       </control>
@@ -12,7 +12,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
+import { TweenLite } from 'gsap';
+
 import img from './assets/bg.svg';
 import logo from './assets/logo.png';
 
@@ -30,16 +32,18 @@ export default class App extends Vue {
   img: string = img;
   imgs: string[] = [img, , , , , , , , , , ,].fill(img).concat(logo);
   progress: any = {};
+  percent: number = 0;
+  smoothPercent: number = 0;
   assetsReady: boolean = false;
   $refs!: {
     app: HTMLElement;
   };
-  get percent() {
-    const { completed, total } = this.progress;
-    if (total) {
-      return `${Math.round((10000 * completed) / total) / 100} %`;
-    }
-    return '-·-';
+  @Watch('percent')
+  percentChange(val: number) {
+    TweenLite.to(this.$data, 0.5, { smoothPercent: val });
+  }
+  get percentDisplay() {
+    return `${this.smoothPercent.toFixed(2)} %`;
   }
   get info(): string {
     const touching = this.touching ? 'touching' : '--------';
@@ -60,13 +64,19 @@ export default class App extends Vue {
     const { width, height } = $app.getBoundingClientRect();
     Object.assign(this, { width, height });
   }
-  onProgress(info: any) {
+  onProgress(info: Progress) {
+    const { completed, total } = info;
     this.progress = info;
+    if (total) {
+      this.percent = Math.round((10000 * completed) / total) / 100;
+    } else {
+      this.percent = 0;
+    }
   }
   finish() {
     setTimeout(() => {
       this.assetsReady = true;
-    }, 345);
+    }, 900);
   }
   mounted() {
     this.initBoundary();
@@ -107,7 +117,7 @@ body,
 }
 .component-fade-enter-active,
 .component-fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease 0.8s;
 }
 .component-fade-enter, .component-fade-leave-to
 /* .component-fade-leave-active for below version 2.1.8 */ {
