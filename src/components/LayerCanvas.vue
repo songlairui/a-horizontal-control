@@ -18,7 +18,7 @@ const cacheToCanvas = async (
   callback?: (num: number) => void,
 ) => {
   const el = document.createElement('canvas');
-  el.width = 12001;
+  el.width = bottom[0].w;
   el.height = 1336;
   const ctx = el.getContext('2d');
   if (!ctx) {
@@ -67,7 +67,7 @@ export default class LayerCanvas extends Vue {
     return Math.round((6667 * this.height) / 667);
   }
 
-  speed: number = 1;
+  speed: number = 5;
   delta: number = 0;
   snapDelta: SnapDelta = {
     stamp: 0,
@@ -89,10 +89,12 @@ export default class LayerCanvas extends Vue {
         i = num;
         vm.$emit('computing', Math.round((10000 * num) / picSum) / 100);
       });
+      await new Promise((r) => setTimeout(r, 50));
       cacheMiddleCanvas = await cacheToCanvas(middle, (num) => {
         j = num;
         vm.$emit('computing', Math.round((10000 * (i + num)) / picSum) / 100);
       });
+      await new Promise((r) => setTimeout(r, 50));
       cacheTopCanvas = await cacheToCanvas(top, (num) => {
         k = num;
         vm.$emit(
@@ -166,7 +168,7 @@ export default class LayerCanvas extends Vue {
       }
       const curDelta = +new Date() - vm.snapDelta.stamp;
       const val = vm.snapDelta.value + (-direction * curDelta) / vm.speed;
-      if (val < 0 && val > vm.width - 9999) {
+      if (val < 0 && val > vm.width - bottom[0].w) {
         vm.delta = val;
       }
       vm.drawSvg(vm.delta);

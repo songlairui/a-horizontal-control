@@ -285,12 +285,12 @@ const top: ImgItem[] = topOri.reduce(
 
 const bottom: ImgItem[] = [
   {
-    w: 12001,
+    w: 6789,
     h: 1336,
     x: 0,
     y: 0,
     key: 'bg2',
-    file: './kill_me/leve1/bg2.svg',
+    file: './kill_me/leve1/bg5.svg',
   },
 ];
 export default {

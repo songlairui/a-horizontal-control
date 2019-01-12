@@ -30,14 +30,15 @@ export default class LoadImages extends Vue {
   @Prop({ type: Number, default: 5 })
   threads!: number;
 
-  @Watch('srcs')
-  srcsReceived(vals: string[]) {
+  srcsReceived() {
     // console.info('srcsReceived');
-    this.tasks = vals.map((src, i) => ({ src, i }));
+    this.tasks = this.srcs.map((src, i) => ({ src, i }));
     this.scheduing.push(...this.tasks.splice(0, this.threads));
     // console.warn('mounted - l ++', this.tasks.length, this.scheduing.length);
   }
-
+  mounted() {
+    this.srcsReceived();
+  }
   activeThreads: number = this.threads;
 
   tasks: LoadTask[] = [];
@@ -95,9 +96,6 @@ export default class LoadImages extends Vue {
     } else {
       this.stopThreads(i);
     }
-  }
-  reset() {
-    
   }
 }
 </script>
