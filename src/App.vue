@@ -16,7 +16,7 @@
       <pre v-if="false" class="info">{{ info }} {{'\n'}}{{ progress }} {{'\n'}} {{ img }}</pre>
     </control>
     <transition name="component-fade" mode="in-out">
-      <div v-if="!assetsReady" class="loading">{{percentDisplay}}</div>
+      <div v-if="masking" class="loading">{{percentDisplay}}</div>
     </transition>
   </div>
 </template>
@@ -40,7 +40,9 @@ export default class App extends Vue {
   progress: any = {};
   percent: number = 0;
   smoothPercent: number = 0;
+  secondPercent: string = '';
   assetsReady: boolean = false;
+  masking: boolean = true;
   readygo: boolean = false;
   $refs!: {
     app: HTMLElement;
@@ -50,7 +52,11 @@ export default class App extends Vue {
     TweenLite.to(this.$data, 0.5, { smoothPercent: val });
   }
   get percentDisplay() {
-    return `${this.smoothPercent.toFixed(2)} %`;
+    let str = `${this.smoothPercent.toFixed(2)} %\n资源下载\n`;
+    if (this.secondPercent) {
+      str += `\n${this.secondPercent}%\n渲染中`;
+    }
+    return str;
   }
   get info(): string {
     const touching = this.touching ? 'touching' : '--------';
@@ -83,9 +89,7 @@ export default class App extends Vue {
     }
   }
   finish() {
-    setTimeout(() => {
-      this.assetsReady = true;
-    }, 500);
+    this.assetsReady = true;
   }
   calcImgMeta() {
     const std = 667;
@@ -103,6 +107,15 @@ export default class App extends Vue {
     this.initBoundary();
     this.imgs = this.calcImgMeta();
     this.readygo = true;
+  }
+  computing(val: number) {
+    this.secondPercent = `${val.toFixed(2)}`;
+  }
+  cacheComplete() {
+    this.secondPercent = '100.00';
+    this.$nextTick(() => {
+      this.masking = false;
+    });
   }
 }
 </script>
@@ -133,14 +146,15 @@ body,
   height: 100vh;
   background: #000;
   color: aliceblue;
-  font-size: 4em;
+  font-size: 2em;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 .component-fade-enter-active,
 .component-fade-leave-active {
-  transition: opacity 0.3s ease 0.8s;
+  transition: opacity 0.2s ease 0.1s;
 }
 .component-fade-enter, .component-fade-leave-to
 /* .component-fade-leave-active for below version 2.1.8 */ {

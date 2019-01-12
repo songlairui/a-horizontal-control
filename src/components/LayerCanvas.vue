@@ -8,11 +8,15 @@ import imgMeta from '../all-imgs';
 import { ImgItem, SnapDelta } from '@/interfaces/index.interface';
 
 const { middle, top, bottom } = imgMeta;
+const picSum = [middle, top, bottom].reduce((a, b) => a + b.length, 1);
 let cacheBottomCanvas: HTMLCanvasElement | null = null;
 let cacheMiddleCanvas: HTMLCanvasElement | null = null;
 let cacheTopCanvas: HTMLCanvasElement | null = null;
 
-const cacheToCanvas = async (imgGroup: ImgItem[]) => {
+const cacheToCanvas = async (
+  imgGroup: ImgItem[],
+  callback?: (num: number) => void,
+) => {
   const el = document.createElement('canvas');
   el.width = 12001;
   el.height = 1336;
@@ -20,11 +24,13 @@ const cacheToCanvas = async (imgGroup: ImgItem[]) => {
   if (!ctx) {
     throw new Error('no Canvas Context');
   }
+  let i = 0;
   for (const item of imgGroup) {
     const { x, y, w, h } = item;
     const cachedImgEl = new Image();
     cachedImgEl.src = item.file;
     let resolve = (e?: any) => e;
+    callback && callback(++i);
     cachedImgEl.onload = () => {
       ctx.drawImage(cachedImgEl, x, y, w, h);
       resolve();
@@ -75,10 +81,27 @@ export default class LayerCanvas extends Vue {
   };
   async mounted() {
     try {
-      cacheBottomCanvas = await cacheToCanvas(bottom);
-      cacheMiddleCanvas = await cacheToCanvas(middle);
-      cacheTopCanvas = await cacheToCanvas(top);
+      let i = 0;
+      let j = 0;
+      let k = 0;
+      const vm = this;
+      cacheBottomCanvas = await cacheToCanvas(bottom, (num) => {
+        i = num;
+        vm.$emit('computing', Math.round((10000 * num) / picSum) / 100);
+      });
+      cacheMiddleCanvas = await cacheToCanvas(middle, (num) => {
+        j = num;
+        vm.$emit('computing', Math.round((10000 * (i + num)) / picSum) / 100);
+      });
+      cacheTopCanvas = await cacheToCanvas(top, (num) => {
+        k = num;
+        vm.$emit(
+          'computing',
+          Math.round((10000 * (i + j + num)) / picSum) / 100,
+        );
+      });
       this.init();
+      this.$emit('cached');
     } catch (error) {
       // console.info('mounted', error);
     }

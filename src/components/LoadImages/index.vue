@@ -38,15 +38,18 @@ export default class LoadImages extends Vue {
     // console.warn('mounted - l ++', this.tasks.length, this.scheduing.length);
   }
 
+  activeThreads: number = this.threads;
+
   tasks: LoadTask[] = [];
   scheduing: LoadTask[] = [];
-  activeThreads: number = this.threads;
   succeedTask: LoadTask[] = [];
   failedTask: LoadTask[] = [];
 
-  taskLength: number = this.srcs.length;
   completedCount: number = 0;
   completed: boolean = false;
+  get taskLength() {
+    return this.srcs.length;
+  }
 
   @Emit('progress')
   processOn(i: number, succeed: boolean = true) {
@@ -92,6 +95,9 @@ export default class LoadImages extends Vue {
     } else {
       this.stopThreads(i);
     }
+  }
+  reset() {
+    
   }
 }
 </script>
