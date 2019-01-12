@@ -65,7 +65,7 @@ export default class LayerCanvas extends Vue {
     return Math.round((6667 * this.height) / 667);
   }
 
-  speed: number = 5;
+  speed: number = 8;
   delta: number = 0;
   snapDelta: SnapDelta = {
     stamp: 0,
