@@ -87,12 +87,10 @@ export default class LayerCanvas extends Vue {
         i = num;
         vm.$emit('computing', Math.round((10000 * num) / picSum) / 100);
       });
-      await new Promise((r) => setTimeout(r, 50));
       cacheMiddleCanvas = await cacheToCanvas(middle, (num) => {
         j = num;
         vm.$emit('computing', Math.round((10000 * (i + num)) / picSum) / 100);
       });
-      await new Promise((r) => setTimeout(r, 50));
       cacheTopCanvas = await cacheToCanvas(top, (num) => {
         k = num;
         vm.$emit(
