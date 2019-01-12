@@ -33,7 +33,7 @@ export default class LoadImage extends Vue {
   }
 
   maybeImg(src: string = '') {
-    return src[0] === '/' || /^(https?|data):/.test(src);
+    return /^[.\/]/.test(src) || /^(https?|data):/.test(src);
   }
 }
 </script>

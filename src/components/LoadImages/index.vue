@@ -17,12 +17,8 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
+import { LoadTask } from '@/interfaces/index.interface';
 import LoadImage from './LoadImage.vue';
-
-interface Task {
-  src: string;
-  i: number;
-}
 
 @Component({
   components: { LoadImage },
@@ -34,11 +30,11 @@ export default class LoadImages extends Vue {
   @Prop({ type: Number, default: 5 })
   threads!: number;
 
-  tasks: Task[] = this.srcs.map((src, i) => ({ src, i }));
-  scheduing: Task[] = [];
+  tasks: LoadTask[] = this.srcs.map((src, i) => ({ src, i }));
+  scheduing: LoadTask[] = [];
   activeThreads: number = this.threads;
-  succeedTask: Task[] = [];
-  failedTask: Task[] = [];
+  succeedTask: LoadTask[] = [];
+  failedTask: LoadTask[] = [];
 
   taskLength: number = this.srcs.length;
   completedCount: number = 0;

@@ -14,7 +14,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator';
-import { Boundary, EventPosi } from './all.interface';
+import { Boundary, EventPosi } from '@/interfaces/index.interface';
 
 @Component
 export default class Control extends Vue {
@@ -91,6 +91,10 @@ export default class Control extends Vue {
 <style scoped>
 .ctrl-block {
   position: fixed;
+  top: 0%;
+  height: 100%;
+  left: 0%;
+  width: 100%;
   user-select: none;
 }
 .ctrl-block.debugging {

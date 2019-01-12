@@ -6,8 +6,3 @@ export interface Boundary {
   right?: number;
   bottom?: number;
 }
-
-export interface EventPosi {
-  clientX: number;
-  clientY: number;
-}
