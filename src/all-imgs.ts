@@ -1,11 +1,4 @@
-interface ImgItem {
-  w: number;
-  h: number;
-  x: number;
-  y: number;
-  key: string;
-  file: string;
-}
+import { ImgItem } from '@/interfaces/index.interface';
 
 const middleOri: ImgItem[][] = [
   [
