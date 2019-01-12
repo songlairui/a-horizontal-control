@@ -26,7 +26,6 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
 import { TweenLite } from 'gsap';
 
 import imgMeta from './all-imgs';
-import img from './assets/bg.svg';
 import { ImgItem, Progress } from '@/interfaces/index.interface';
 
 @Component
@@ -35,7 +34,7 @@ export default class App extends Vue {
   touching: boolean = false;
   width: number = 360;
   height: number = 540;
-  img: string = img;
+  img: string = '';
   imgs: string[] = [];
   progress: any = {};
   percent: number = 0;
@@ -67,7 +66,7 @@ export default class App extends Vue {
   }
   get canvasOpt() {
     return {
-      img,
+      img: '',
       width: this.width,
       height: this.height,
       touching: this.touching,

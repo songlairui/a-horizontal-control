@@ -52,8 +52,6 @@ const imgEls: HTMLImageElement[] = [];
 
 @Component
 export default class LayerCanvas extends Vue {
-  img: string = './kill_me/leve1/bg2.svg';
-
   @Prop(Number)
   width!: number;
   @Prop(Number)
@@ -114,14 +112,6 @@ export default class LayerCanvas extends Vue {
     canvas.height = this.height;
     this.ctx = canvas.getContext('2d');
     this.drawSvg();
-  }
-  async loadImg() {
-    await new Promise((r) => {
-      imgEl.onload = () => {
-        r(imgEl);
-      };
-      imgEl.src = this.img;
-    });
   }
   drawSvg(offsetX = 0) {
     const { ctx } = this;
