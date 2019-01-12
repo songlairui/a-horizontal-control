@@ -16,7 +16,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator';
 import { LoadTask } from '@/interfaces/index.interface';
 import LoadImage from './LoadImage.vue';
 
@@ -30,7 +30,15 @@ export default class LoadImages extends Vue {
   @Prop({ type: Number, default: 5 })
   threads!: number;
 
-  tasks: LoadTask[] = this.srcs.map((src, i) => ({ src, i }));
+  @Watch('srcs')
+  srcsReceived(vals: string[]) {
+    // console.info('srcsReceived');
+    this.tasks = vals.map((src, i) => ({ src, i }));
+    this.scheduing.push(...this.tasks.splice(0, this.threads));
+    // console.warn('mounted - l ++', this.tasks.length, this.scheduing.length);
+  }
+
+  tasks: LoadTask[] = [];
   scheduing: LoadTask[] = [];
   activeThreads: number = this.threads;
   succeedTask: LoadTask[] = [];
@@ -39,10 +47,6 @@ export default class LoadImages extends Vue {
   taskLength: number = this.srcs.length;
   completedCount: number = 0;
   completed: boolean = false;
-
-  mounted() {
-    this.scheduing.push(...this.tasks.splice(0, this.threads));
-  }
 
   @Emit('progress')
   processOn(i: number, succeed: boolean = true) {

@@ -1,14 +1,19 @@
 <template>
   <div id="app" ref="app">
-    <load-images v-if="!assetsReady" :srcs="imgs" @progress="onProgress" @finish="finish"/>
-    <layer-canvas v-else v-bind="canvasOpt"/>
+    <load-images v-show="false" :srcs="imgs" @progress="onProgress" @finish="finish"/>
+    <layer-canvas
+      v-if="assetsReady"
+      v-bind="canvasOpt"
+      @computing="computing"
+      @cached="cacheComplete"
+    />
     <control
       v-if="assetsReady"
-      :debugging="true"
+      :debugging="false"
       :touching.sync="touching"
       :direction.sync="direction"
     >
-      <pre class="info">{{ info }} {{'\n'}}{{ progress }} {{'\n'}} {{ img }}</pre>
+      <pre v-if="false" class="info">{{ info }} {{'\n'}}{{ progress }} {{'\n'}} {{ img }}</pre>
     </control>
     <transition name="component-fade" mode="in-out">
       <div v-if="!assetsReady" class="loading">{{percentDisplay}}</div>
@@ -20,13 +25,9 @@
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import { TweenLite } from 'gsap';
 
+import imgMeta from './all-imgs';
 import img from './assets/bg.svg';
-import logo from './assets/logo.png';
-
-interface Progress {
-  completed: number;
-  total: number;
-}
+import { ImgItem, Progress } from '@/interfaces/index.interface';
 
 @Component
 export default class App extends Vue {
@@ -35,11 +36,12 @@ export default class App extends Vue {
   width: number = 360;
   height: number = 540;
   img: string = img;
-  imgs: string[] = [img, , , , , , , , , , ,].fill(img).concat(logo);
+  imgs: string[] = [];
   progress: any = {};
   percent: number = 0;
   smoothPercent: number = 0;
   assetsReady: boolean = false;
+  readygo: boolean = false;
   $refs!: {
     app: HTMLElement;
   };
@@ -59,9 +61,9 @@ export default class App extends Vue {
   }
   get canvasOpt() {
     return {
+      img,
       width: this.width,
       height: this.height,
-      img: logo,
       touching: this.touching,
       direction: this.direction,
     };
@@ -83,10 +85,24 @@ export default class App extends Vue {
   finish() {
     setTimeout(() => {
       this.assetsReady = true;
-    }, 900);
+    }, 500);
   }
-  mounted() {
+  calcImgMeta() {
+    const std = 667;
+    const lexi = this.height / std;
+    const fn = (num: number): number => Math.round(num * lexi);
+    return [...imgMeta.top, ...imgMeta.middle].map((item: ImgItem) => {
+      item.w = fn(item.w);
+      item.h = fn(item.h);
+      item.x = fn(item.x);
+      item.y = fn(item.y);
+      return item.file;
+    });
+  }
+  async mounted() {
     this.initBoundary();
+    this.imgs = this.calcImgMeta();
+    this.readygo = true;
   }
 }
 </script>

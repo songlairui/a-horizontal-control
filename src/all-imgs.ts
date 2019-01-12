@@ -121,8 +121,8 @@ const topOri: ImgItem[][] = [
   ],
   [
     { w: 67, h: 115, key: 't2v1', file: '2-1-气球.svg', x: 785, y: 572 },
-    { w: 271, h: 150, key: 't2v2', file: '2-2-架子.svg', x: 904, y: 558 },
-    { w: 268, h: 148, key: 't2v2-1', file: '2-2-礼物区.svg', x: 1032, y: 249 },
+    { w: 1699, h: 792, key: 't2v2', file: '2-2-架子.svg', x: 762, y: -65 },
+    { w: 268, h: 148, key: 't2v2-1', file: '2-2-礼物区.svg', x: 906, y: 561 },
     { w: 60, h: 151, key: 't2v4', file: '2-4-相机三脚架.svg', x: 1420, y: 524 },
     { w: 157, h: 229, key: 't2v5', file: '2-5-手1.svg', x: 1475, y: 514 },
     { w: 292, h: 238, key: 't2v6', file: '2-6-手2.svg', x: 1434, y: 521 },
@@ -283,7 +283,18 @@ const top: ImgItem[] = topOri.reduce(
   [],
 );
 
+const bottom: ImgItem[] = [
+  {
+    w: 12001,
+    h: 1336,
+    x: 0,
+    y: 0,
+    key: 'bg2',
+    file: './kill_me/leve1/bg2.svg',
+  },
+];
 export default {
   middle,
   top,
+  bottom,
 };
